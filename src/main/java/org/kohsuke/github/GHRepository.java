@@ -125,7 +125,9 @@ public class GHRepository extends GHObject {
     private GHRepository source, parent;
 
     private Boolean isTemplate;
+
     private boolean compareUsePaginatedCommits;
+
 
     /**
      * Read.
@@ -3336,6 +3338,34 @@ public class GHRepository extends GHObject {
                 .withUrlPath(getApiTailUrl("/rules/branches/" + branch))
                 .toIterable(GHRepositoryRule[].class, null);
     }
+
+    /**
+     * Get all rulesets that apply to current repository
+     * (https://docs.github.com/en/rest/repos/rules?apiVersion=2022-11-28#get-all-repository-rulesets).
+     *
+     * @return the rulesets for repository
+     */
+    public PagedIterable<GHRuleSet> listRuleSetsForRepository(){
+    	return root().createRequest()//
+    			.method("GET")//
+    			.withUrlPath(getApiTailUrl("/rulesets"))//
+    			.toIterable(GHRuleSet[].class, null);
+    }
+
+    /**
+     * Get a ruleset that apply to current repository by its ID
+     * (https://docs.github.com/en/rest/repos/rules?apiVersion=2022-11-28#get-a-repository-ruleset).
+     *
+     * @param id the ID of this ruleset
+     * @return the ruleset
+     * @throws IOException
+     */
+    public GHRuleSet getARepositoryRuleSet(int id) throws IOException{
+    	return root().createRequest()//
+    			.method("GET")//
+    			.withUrlPath(getApiTailUrl("/rulesets/"+id))//
+ 			.fetch(GHRuleSet.class);
+       }
 
     /**
      * Check, if vulnerability alerts are enabled for this repository
